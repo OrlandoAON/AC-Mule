@@ -1,0 +1,34 @@
+{
+    "flights": [
+        {
+            "airlineName": "United",
+            "price": 345.99,
+            "departureDate": "2015/02/11",
+            "planeType": "Boeing 737",
+            "origin": "MUA",
+            "emptySeats": 52,
+            "code": "ER45if",
+            "destination": "LAX"
+        },
+        {
+            "airlineName": "United",
+            "price": 346,
+            "departureDate": "2015/04/11",
+            "planeType": "Boeing 777",
+            "origin": "MUA",
+            "emptySeats": 12,
+            "code": "ER45jd",
+            "destination": "LAX"
+        },
+        {
+            "airlineName": "United",
+            "price": 423,
+            "departureDate": "2015/06/11",
+            "planeType": "Boeing 707",
+            "origin": "MUA",
+            "emptySeats": 0,
+            "code": "ER0945",
+            "destination": "LAX"
+        }
+    ]
+}

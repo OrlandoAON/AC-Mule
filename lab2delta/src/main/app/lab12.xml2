@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.5.2" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <apikit:config name="Router" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router">
+        <apikit:flow-mapping resource="/flights/{destination}" action="get" flow-ref="preparePayload" />
+    </apikit:config>
+    <catch-exception-strategy name="RAMLException" />
+    <apikit:mapping-exception-strategy name="Mapping_Exception_Strategy" doc:name="Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="java.lang.NullPointerException" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+    <flow name="lab12Flow1" doc:name="lab12Flow1">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" path="api" doc:name="HTTP" />
+        <apikit:router config-ref="Router" doc:name="APIkit Router" />
+        <exception-strategy ref="RAMLException" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="preparePayload" doc:name="preparePayload">
+        <set-payload value="#[message.inboundProperties[&quot;http.relative.path&quot;].split(&quot;/&quot;)[1]]" doc:name="Set Payload" />
+        <flow-ref name="gettingAllFlights" doc:name="Flow Reference" />
+    </flow>
+    <flow name="get:/flights/{destination}:Router" doc:name="get:/flights/{destination}:Router">
+        <set-payload value="[{&quot;airlineName&quot;:&quot;United&quot;,&quot;price&quot;:400,&quot;departureDate&quot;:&quot;2015/03/20&quot;,&quot;planeType&quot;:&quot;Boing 737&quot;,&quot;origin&quot;:&quot;MUA&quot;,&quot;emptySeats&quot;:0,&quot;code&quot;:&quot;ER38sd&quot;,&quot;destination&quot;:&quot;SFO&quot;},{&quot;airlineName&quot;:&quot;United&quot;,&quot;price&quot;:945,&quot;departureDate&quot;:&quot;2015/09/11&quot;,&quot;planeType&quot;:&quot;Boing 757&quot;,&quot;origin&quot;:&quot;MUA&quot;,&quot;emptySeats&quot;:54,&quot;code&quot;:&quot;ER39rk&quot;,&quot;destination&quot;:&quot;SFO&quot;},{&quot;airlineName&quot;:&quot;United&quot;,&quot;price&quot;:954,&quot;departureDate&quot;:&quot;2015/02/12&quot;,&quot;planeType&quot;:&quot;Boing 777&quot;,&quot;origin&quot;:&quot;MUA&quot;,&quot;emptySeats&quot;:23,&quot;code&quot;:&quot;ER39rj&quot;,&quot;destination&quot;:&quot;SFO&quot;}]" doc:name="Set Payload"/>
+    </flow>
+</mule>

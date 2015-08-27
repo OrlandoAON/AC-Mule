@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <ws:consumer-config name="Web_Service_Consumer" wsdlLocation="http://airlines.cloudhub.io/delta?wsdl" service="TicketServiceService" port="TicketServicePort" serviceAddress="http://airlines.cloudhub.io/delta" doc:name="Web Service Consumer"/>
+    <data-mapper:config name="Xml_findFlightResponse__To_Pojo" transformationGraphPath="xml_findflightresponse__to_pojo.grf" doc:name="Xml_findFlightResponse__To_Pojo"/>
+    <data-mapper:config name="String_To_Xml_findFlight_" transformationGraphPath="string_to_xml_findflight_.grf" doc:name="String_To_Xml_findFlight_"/>
+    <flow name="lab2deltaFlow1" doc:name="lab2deltaFlow1">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" path="delta" doc:name="HTTP"/>
+        <logger level="INFO" doc:name="Logger"/>
+        <data-mapper:transform config-ref="String_To_Xml_findFlight_" input-ref="#[message.inboundProperties[&quot;http.relative.path&quot;]]" doc:name="String To Xml&lt;findFlight&gt;"/>
+        <ws:consumer config-ref="Web_Service_Consumer" operation="findFlight" doc:name="Web Service Consumer"/>
+        <data-mapper:transform config-ref="Xml_findFlightResponse__To_Pojo" doc:name="Xml&lt;findFlightResponse&gt; To Pojo"/>
+        <response>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+        </response>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
